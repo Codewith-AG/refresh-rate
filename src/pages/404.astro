@@ -1,0 +1,37 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TopNav from "../components/TopNav.astro";
+import Footer from "../components/Footer.astro";
+
+const pageTitle = "Page Not Found (404) — Refresh Rate Test";
+const pageDescription = "The page you are looking for does not exist.";
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+>
+  <TopNav />
+
+  <main class="mx-auto max-w-site flex-grow px-4 py-24 sm:px-6 text-center flex flex-col items-center justify-center min-h-[60vh]">
+    <h1 class="font-display text-6xl font-semibold tracking-tight text-ink sm:text-8xl">
+      404
+    </h1>
+    <h2 class="mt-4 font-display text-2xl font-medium text-ink">
+      Page Not Found
+    </h2>
+    <p class="mt-6 text-lg text-ink-muted max-w-xl mx-auto">
+      Sorry, the page you're looking for doesn't exist or has been moved.
+    </p>
+    <div class="mt-10">
+      <a
+        href="/"
+        class="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+      >
+        Go back home
+      </a>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

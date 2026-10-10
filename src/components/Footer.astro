@@ -1,0 +1,78 @@
+---
+import BrandMark from "./BrandMark.astro";
+
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: "Test",
+    links: [
+      { href: "/", label: "Refresh rate test" },
+      { href: "/#advertised-rate", label: "Advertised-rate check" },
+      { href: "/#device-info", label: "Device info" },
+    ],
+  },
+  {
+    title: "Learn",
+    links: [
+      { href: "/how-it-works", label: "How it works" },
+      { href: "/troubleshooting", label: "Troubleshooting" },
+      { href: "/#faq", label: "FAQ" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { href: "/about-us", label: "About Us" },
+      { href: "/contact", label: "Contact Us" },
+      { href: "/privacy-policy", label: "Privacy Policy" },
+      { href: "/terms-conditions", label: "Terms & Conditions" },
+    ],
+  },
+];
+---
+
+<footer class="border-t border-hairline bg-canvas">
+  <div class="mx-auto max-w-site px-4 py-16 sm:px-6">
+    <div class="grid gap-10 sm:grid-cols-2 md:grid-cols-5">
+      <div class="md:col-span-2">
+        <BrandMark />
+        <p class="mt-4 max-w-xs text-sm leading-relaxed text-ink-subtle">
+          A fast, private, ad-free way to measure your monitor or screen's
+          refresh rate in real time — right in your browser.
+        </p>
+      </div>
+
+      {
+        columns.map((col) => (
+          <div>
+            <h2 class="text-xs font-medium tracking-wide text-ink-subtle uppercase">
+              {col.title}
+            </h2>
+            <ul class="mt-4 space-y-2.5">
+              {col.links.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="text-sm text-ink-muted transition-colors hover:text-ink"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <div
+      class="mt-12 flex flex-col gap-3 border-t border-hairline pt-6 text-xs text-ink-tertiary sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {year} Refresh Rate Test · freerefreshratetest.com</p>
+      <p>
+        All measurement runs locally in your browser. Nothing is uploaded.
+      </p>
+    </div>
+  </div>
+</footer>

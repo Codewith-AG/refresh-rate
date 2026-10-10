@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#010102"/>
+  <rect x="0.5" y="0.5" width="1199" height="629" stroke="#23252a"/>
+  <g transform="translate(80 96)">
+    <rect width="64" height="64" rx="16" fill="#4f46e5"/>
+    <path d="M16 34c4.4-10 10.8-10 15.2 0s10.8 10 15.2 0" stroke="#ffffff" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="46.8" cy="34" r="3.2" fill="#ffffff"/>
+    <text x="88" y="44" font-family="Inter, SF Pro Display, system-ui, sans-serif" font-size="30" font-weight="600" fill="#f7f8f8">Refresh Rate Test</text>
+  </g>
+  <text x="80" y="300" font-family="Inter, SF Pro Display, system-ui, sans-serif" font-size="76" font-weight="700" letter-spacing="-2" fill="#f7f8f8">Check your screen's</text>
+  <text x="80" y="392" font-family="Inter, SF Pro Display, system-ui, sans-serif" font-size="76" font-weight="700" letter-spacing="-2" fill="#f7f8f8">real refresh rate <tspan fill="#818cf8">in real time</tspan></text>
+  <g transform="translate(80 456)" font-family="JetBrains Mono, ui-monospace, monospace" font-size="26" fill="#8a8f98">
+    <text x="0" y="26">60Hz</text>
+    <text x="110" y="26">90Hz</text>
+    <text x="220" y="26">120Hz</text>
+    <text x="345" y="26">144Hz</text>
+    <text x="470" y="26">165Hz</text>
+    <text x="595" y="26">240Hz</text>
+    <text x="720" y="26">360Hz+</text>
+  </g>
+  <text x="80" y="566" font-family="JetBrains Mono, ui-monospace, monospace" font-size="24" fill="#62666d">freerefreshratetest.com</text>
+</svg>

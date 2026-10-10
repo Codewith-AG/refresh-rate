@@ -1,0 +1,50 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TopNav from "../components/TopNav.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Contact Us — Refresh Rate Test";
+const description = "Get in touch with the Refresh Rate Test team for support, feedback, or inquiries.";
+---
+
+<Layout title={title} description={description}>
+  <TopNav />
+  <main class="mx-auto max-w-site px-4 pb-24 sm:px-6">
+    <section class="pt-14 pb-10 sm:pt-20">
+      <h1 class="font-display text-4xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl">
+        Contact Us
+      </h1>
+      <p class="mt-5 text-lg leading-relaxed text-ink-muted max-w-2xl">
+        Have a question, feedback, or found a bug? We'd love to hear from you. 
+      </p>
+    </section>
+
+    <div class="prose prose-slate dark:prose-invert max-w-none">
+      <p>
+        Since we operate this tool completely free and with a privacy-first approach, we don't have a massive support team. However, we do read every message and try our best to respond to valid inquiries.
+      </p>
+      
+      <div class="mt-8 rounded-xl border border-hairline bg-surface-1 p-6 shadow-sm shadow-slate-900/5 max-w-xl">
+        <h2 class="!mt-0 font-display text-xl font-medium tracking-tight text-ink">
+          Email Us
+        </h2>
+        <p class="text-ink-muted">
+          You can reach out to us directly at:
+        </p>
+        <p class="font-mono text-lg text-primary">
+          <a href="mailto:support@freerefreshratetest.com" class="text-primary no-underline hover:underline">
+            support@freerefreshratetest.com
+          </a>
+        </p>
+      </div>
+
+      <h2 class="mt-12">Common Inquiries</h2>
+      <ul>
+        <li><strong>Troubleshooting:</strong> If your refresh rate is reading lower than expected, please check our <a href="/troubleshooting">Troubleshooting guide</a> first, as it solves 95% of issues.</li>
+        <li><strong>Feature Requests:</strong> Have an idea to make the tool better? Drop us an email.</li>
+        <li><strong>Partnerships:</strong> For any business-related inquiries, please use the email above.</li>
+      </ul>
+    </div>
+  </main>
+  <Footer />
+</Layout>

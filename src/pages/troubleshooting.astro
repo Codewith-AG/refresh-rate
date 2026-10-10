@@ -1,0 +1,128 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TopNav from "../components/TopNav.astro";
+import Footer from "../components/Footer.astro";
+import Faq from "../components/Faq.astro";
+
+const guides = [
+  {
+    platform: "Windows 11 / 10",
+    steps: [
+      "Open Settings → System → Display → Advanced display.",
+      "Under 'Choose a refresh rate', pick your panel's highest value.",
+      "If only 60Hz is listed, update your GPU driver (NVIDIA/AMD/Intel) and reconnect.",
+      "For laptops, set the power mode to 'Best performance' while plugged in.",
+    ],
+  },
+  {
+    platform: "macOS",
+    steps: [
+      "Open System Settings → Displays.",
+      "Hold Option and click 'Refresh Rate' to reveal all available rates.",
+      "Select the highest supported rate for your external display.",
+      "On ProMotion MacBooks, ensure 'ProMotion' (not a fixed 60Hz) is selected.",
+    ],
+  },
+  {
+    platform: "Cables & ports",
+    steps: [
+      "HDMI 1.4 caps 1080p at ~120Hz and 4K at only 30Hz — use HDMI 2.0/2.1 or DisplayPort.",
+      "Use the cable that shipped with the monitor, or a certified high-bandwidth one.",
+      "Plug into the GPU's ports, not the motherboard, on desktops with a dedicated card.",
+      "Avoid cheap adapters/splitters — they silently cap bandwidth and cause frame skipping.",
+    ],
+  },
+  {
+    platform: "Laptops",
+    steps: [
+      "Keep the charger connected — battery-saver modes drop the panel to 60Hz.",
+      "Set the OS power/graphics mode to high performance.",
+      "On hybrid-GPU laptops, make sure the display is driven by the discrete GPU.",
+      "Check the manufacturer's utility (e.g. gaming center) for a refresh-rate toggle.",
+    ],
+  },
+  {
+    platform: "Phones & tablets",
+    steps: [
+      "iPhone (ProMotion): Settings → Accessibility → Motion → turn OFF 'Limit Frame Rate'.",
+      "Android: Settings → Display → 'Smooth display' / 'Motion smoothness' → High.",
+      "Disable battery saver, which forces 60Hz on most devices.",
+      "Some devices only run high-Hz at certain brightness or thermal levels.",
+    ],
+  },
+];
+
+const faqItems = [
+  {
+    q: "The test shows my full rate but games feel choppy — why?",
+    a: "Your display may be receiving the signal correctly while the GPU can't sustain that many frames in-game. Lower in-game settings, or confirm VSYNC/G-Sync/FreeSync is configured as you expect.",
+  },
+  {
+    q: "My number keeps jumping around. Is my monitor broken?",
+    a: "If you have VRR (G-Sync/FreeSync) enabled, a fluctuating rate is normal — it tracks on-screen activity. A steady reading with occasional dropped-frame spikes usually points to a cable or background CPU load.",
+  },
+  {
+    q: "I enabled 144Hz but still see dropped frames here.",
+    a: "That's often a bandwidth problem: a borderline cable or adapter accepts the mode but can't carry every frame. Swap to a certified DisplayPort/HDMI 2.1 cable and retest.",
+  },
+];
+---
+
+<Layout
+  title="Refresh Rate Troubleshooting — Fix 60Hz on Monitor, Mobile & More"
+  description="Stuck at 60Hz after your refresh rate test? Step-by-step guide to fix your monitor, screen, laptop or mobile refresh rate on Windows, macOS, Android and iPhone. Free display refresh rate fix."
+  keywords="refresh rate troubleshooting, fix 60hz monitor, screen refresh rate fix, display refresh rate not working, refresh rate test mobile fix, 120hz not showing, monitor refresh rate stuck"
+>
+  <TopNav />
+
+  <main class="mx-auto max-w-site px-4 pb-24 sm:px-6">
+    <section class="pt-14 pb-10 sm:pt-20">
+      <p class="text-[13px] font-medium tracking-[0.4px] text-ink-subtle uppercase">
+        Troubleshooting
+      </p>
+      <h1
+        class="mt-4 max-w-3xl font-display text-4xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl"
+      >
+        Stuck at 60Hz? Let's fix that.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        If the test isn't showing your display's rated refresh rate, work
+        through the fixes for your setup below, then re-run the test.
+      </p>
+      <a
+        href="/#test"
+        class="mt-6 inline-flex rounded-md border border-hairline bg-surface-1 px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-surface-2"
+      >
+        Back to the test
+      </a>
+    </section>
+
+    <section class="grid gap-4 md:grid-cols-2">
+      {
+        guides.map((guide) => (
+          <div class="rounded-xl border border-hairline bg-surface-1 p-6 shadow-sm shadow-slate-900/5">
+            <h2 class="font-display text-xl font-medium tracking-tight text-ink">
+              {guide.platform}
+            </h2>
+            <ol class="mt-4 space-y-3">
+              {guide.steps.map((step, i) => (
+                <li class="flex gap-3 text-sm leading-relaxed text-ink-muted">
+                  <span class="mt-0.5 font-mono text-xs text-primary">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))
+      }
+    </section>
+
+    <div class="mt-24">
+      <Faq items={faqItems} heading="Troubleshooting FAQ" />
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

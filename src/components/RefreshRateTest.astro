@@ -1,0 +1,375 @@
+---
+// The core interactive tool. All logic runs client-side (see the <script>).
+const standardRates = [60, 75, 90, 120, 144, 165, 240, 360];
+---
+
+<section id="test" class="scroll-mt-20">
+  <div
+    id="rrt-stage"
+    class="relative overflow-hidden rounded-2xl border border-stage-border bg-stage p-5 text-stage-ink shadow-xl shadow-slate-900/15 sm:p-8"
+  >
+    <!-- Hidden-tab / accuracy guard -->
+    <div
+      id="rrt-hidden-warning"
+      role="alert"
+      hidden
+      class="mb-5 rounded-lg border border-stage-border bg-stage-2 px-4 py-3 text-sm text-stage-ink"
+    >
+      ⚠️ This tab was in the background, so the browser throttled measurement.
+      Keep this tab focused for an accurate reading.
+    </div>
+
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+      <!-- Readout -->
+      <div class="flex flex-col">
+        <p
+          class="text-[13px] font-semibold tracking-[0.4px] text-stage-muted uppercase"
+        >
+          Measured refresh rate
+        </p>
+
+        <div class="mt-3 flex items-baseline gap-3">
+          <span
+            id="rrt-hz"
+            class="font-mono text-6xl leading-none font-semibold tracking-tight text-stage-ink tabular-nums sm:text-7xl"
+            >—</span
+          >
+          <span class="font-mono text-2xl text-stage-muted">Hz</span>
+        </div>
+
+        <div class="mt-4 flex flex-wrap items-center gap-2">
+          <span
+            id="rrt-nearest"
+            hidden
+            class="inline-flex items-center rounded-full border border-stage-border bg-stage-2 px-2.5 py-1 text-xs text-stage-ink"
+          ></span>
+          <span
+            id="rrt-status"
+            class="inline-flex items-center gap-1.5 rounded-full border border-stage-border bg-stage-2 px-2.5 py-1 text-xs text-stage-muted"
+          >
+            <span
+              id="rrt-status-dot"
+              class="h-1.5 w-1.5 rounded-full bg-stage-muted"></span>
+            <span id="rrt-status-text">Idle</span>
+          </span>
+        </div>
+
+        <!-- Controls -->
+        <div class="mt-6 flex flex-wrap gap-2">
+          <button
+            id="rrt-start"
+            type="button"
+            class="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-hover"
+          >
+            Pause
+          </button>
+          <button
+            id="rrt-reset"
+            type="button"
+            class="rounded-md border border-stage-border bg-stage-2 px-4 py-2 text-sm font-medium text-stage-ink transition-colors hover:bg-stage-3"
+          >
+            Reset
+          </button>
+          <button
+            id="rrt-fullscreen"
+            type="button"
+            class="rounded-md border border-stage-border bg-stage-2 px-4 py-2 text-sm font-medium text-stage-ink transition-colors hover:bg-stage-3"
+          >
+            Fullscreen
+          </button>
+        </div>
+
+        <!-- Advertised-rate check -->
+        <div id="advertised-rate" class="mt-8 scroll-mt-20">
+          <label
+            for="rrt-advertised"
+            class="text-[13px] font-semibold tracking-[0.4px] text-stage-muted uppercase"
+          >
+            Did you get the Hz you paid for?
+          </label>
+          <div class="mt-3 flex flex-wrap items-center gap-3">
+            <select
+              id="rrt-advertised"
+              class="rounded-md border border-stage-border bg-stage-2 px-3 py-2 text-sm text-stage-ink focus:border-primary-focus"
+            >
+              <option value="0">Select advertised rate…</option>
+              {
+                standardRates.map((r) => (
+                  <option value={r}>{r} Hz</option>
+                ))
+              }
+            </select>
+            <output
+              id="rrt-verdict"
+              class="text-sm text-stage-muted"
+              aria-live="polite">Pick your display's rated Hz.</output
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats + graph -->
+      <div class="flex flex-col gap-5">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div class="rounded-xl border border-stage-border bg-stage-2 p-4">
+            <p class="text-xs text-stage-muted">Current</p>
+            <p id="rrt-current" class="mt-1 font-mono text-xl text-stage-ink tabular-nums">—</p>
+          </div>
+          <div class="rounded-xl border border-stage-border bg-stage-2 p-4">
+            <p class="text-xs text-stage-muted">Average</p>
+            <p id="rrt-average" class="mt-1 font-mono text-xl text-stage-ink tabular-nums">—</p>
+          </div>
+          <div class="rounded-xl border border-stage-border bg-stage-2 p-4">
+            <p class="text-xs text-stage-muted">Stability</p>
+            <p id="rrt-stability" class="mt-1 font-mono text-xl text-stage-ink tabular-nums">—</p>
+          </div>
+          <div class="rounded-xl border border-stage-border bg-stage-2 p-4">
+            <p class="text-xs text-stage-muted">Max</p>
+            <p id="rrt-max" class="mt-1 font-mono text-xl text-stage-ink tabular-nums">—</p>
+          </div>
+          <div class="rounded-xl border border-stage-border bg-stage-2 p-4">
+            <p class="text-xs text-stage-muted">Min</p>
+            <p id="rrt-min" class="mt-1 font-mono text-xl text-stage-ink tabular-nums">—</p>
+          </div>
+          <div class="rounded-xl border border-stage-border bg-stage-2 p-4">
+            <p class="text-xs text-stage-muted">Dropped</p>
+            <p id="rrt-dropped" class="mt-1 font-mono text-xl text-stage-ink tabular-nums">0</p>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-stage-border bg-stage-2 p-4">
+          <div class="mb-2 flex items-center justify-between">
+            <p class="text-xs text-stage-muted">Frame time (ms per frame)</p>
+            <p id="rrt-frames" class="font-mono text-xs text-stage-muted tabular-nums">
+              0 frames
+            </p>
+          </div>
+          <canvas
+            id="rrt-graph"
+            class="block h-24 w-full"
+            role="img"
+            aria-label="Live frame-time graph"></canvas>
+        </div>
+
+        <p class="text-xs leading-relaxed text-stage-muted">
+          The browser renders in sync with the display this window is on. Values
+          can be limited by browser VSYNC or OS compositing. For the most
+          accurate reading, keep this tab focused and use Fullscreen.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { RefreshRateMeter, formatHz, type RefreshSample } from "../scripts/refresh-rate";
+
+  const $ = <T extends HTMLElement = HTMLElement>(id: string) =>
+    document.getElementById(id) as T | null;
+
+  const hzEl = $("rrt-hz");
+  const nearestEl = $("rrt-nearest");
+  const statusText = $("rrt-status-text");
+  const statusDot = $("rrt-status-dot");
+  const currentEl = $("rrt-current");
+  const averageEl = $("rrt-average");
+  const stabilityEl = $("rrt-stability");
+  const maxEl = $("rrt-max");
+  const minEl = $("rrt-min");
+  const droppedEl = $("rrt-dropped");
+  const framesEl = $("rrt-frames");
+  const warningEl = $("rrt-hidden-warning");
+  const startBtn = $<HTMLButtonElement>("rrt-start");
+  const resetBtn = $<HTMLButtonElement>("rrt-reset");
+  const fsBtn = $<HTMLButtonElement>("rrt-fullscreen");
+  const stage = $("rrt-stage");
+  const advertisedSel = $<HTMLSelectElement>("rrt-advertised");
+  const verdictEl = $("rrt-verdict");
+  const canvas = $<HTMLCanvasElement>("rrt-graph");
+
+  const ctx = canvas?.getContext("2d") ?? null;
+  let latest: RefreshSample | null = null;
+  let sawHidden = false;
+
+  const colors = {
+    line: "#818cf8",
+    good: "#22c55e",
+    warn: "#f59e0b",
+    grid: "#2b3a5e",
+    text: "#9fb0d0",
+  };
+
+  function setStatus(text: string, tone: "idle" | "live" | "paused" | "warn") {
+    if (statusText) statusText.textContent = text;
+    if (!statusDot) return;
+    const map = {
+      idle: "bg-stage-muted",
+      live: "bg-success",
+      paused: "bg-stage-muted",
+      warn: "bg-warning",
+    } as const;
+    statusDot.className = `h-1.5 w-1.5 rounded-full ${map[tone]}`;
+  }
+
+  function resizeCanvas() {
+    if (!canvas || !ctx) return;
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function drawGraph(sample: RefreshSample) {
+    if (!canvas || !ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const data = sample.frameTimesMs;
+    if (data.length < 2) return;
+
+    // Scale: 0 .. max(frame time, target*2) so spikes are visible.
+    const sorted = [...data].sort((a, b) => a - b);
+    const med = sorted[Math.floor(sorted.length / 2)] || 16.7;
+    const maxVal = Math.max(med * 2.2, ...data);
+    const toY = (v: number) => h - (v / maxVal) * (h - 4) - 2;
+    const stepX = w / (data.length - 1);
+
+    // Median reference line.
+    ctx.strokeStyle = colors.grid;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(0, toY(med));
+    ctx.lineTo(w, toY(med));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Frame-time line.
+    ctx.strokeStyle = colors.line;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    data.forEach((v, i) => {
+      const x = i * stepX;
+      const y = toY(v);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Mark dropped-frame spikes.
+    ctx.fillStyle = colors.warn;
+    data.forEach((v, i) => {
+      if (v > med * 1.8) {
+        ctx.beginPath();
+        ctx.arc(i * stepX, toY(v), 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+  }
+
+  function updateVerdict() {
+    if (!advertisedSel || !verdictEl) return;
+    const target = Number(advertisedSel.value);
+    if (!target) {
+      verdictEl.textContent = "Pick your display's rated Hz.";
+      verdictEl.className = "text-sm text-stage-muted";
+      return;
+    }
+    if (!latest || !latest.settled) {
+      verdictEl.textContent = "Measuring… hold on a moment.";
+      verdictEl.className = "text-sm text-stage-muted";
+      return;
+    }
+    const measured = latest.averageHz;
+    const ratio = measured / target;
+    if (ratio >= 0.97) {
+      verdictEl.textContent = `✓ Hitting ~${target} Hz (measured ${formatHz(measured)} Hz).`;
+      verdictEl.className = "text-sm font-medium text-success";
+    } else if (ratio >= 0.9) {
+      verdictEl.textContent = `~ Close: ${formatHz(measured)} Hz vs ${target} Hz. Check cable/settings.`;
+      verdictEl.className = "text-sm font-medium text-warning";
+    } else {
+      verdictEl.textContent = `✗ Only ${formatHz(measured)} Hz of ${target} Hz. See troubleshooting.`;
+      verdictEl.className = "text-sm font-medium text-danger";
+    }
+  }
+
+  function render(sample: RefreshSample) {
+    latest = sample;
+
+    if (hzEl) hzEl.textContent = sample.settled ? formatHz(sample.averageHz) : "…";
+    if (currentEl) currentEl.textContent = formatHz(sample.currentHz);
+    if (averageEl) averageEl.textContent = formatHz(sample.averageHz);
+    if (stabilityEl)
+      stabilityEl.textContent = sample.settled ? `${sample.stability}%` : "—";
+    if (maxEl) maxEl.textContent = sample.maxHz ? formatHz(sample.maxHz) : "—";
+    if (minEl) minEl.textContent = sample.minHz ? formatHz(sample.minHz) : "—";
+    if (droppedEl) droppedEl.textContent = String(sample.droppedFrames);
+    if (framesEl) framesEl.textContent = `${sample.frameCount} frames`;
+
+    if (nearestEl) {
+      if (sample.settled && sample.nearestStandard) {
+        nearestEl.textContent = `≈ ${sample.nearestStandard} Hz panel`;
+        nearestEl.hidden = false;
+      } else {
+        nearestEl.hidden = true;
+      }
+    }
+
+    if (sample.hidden) {
+      sawHidden = true;
+      setStatus("Paused (tab hidden)", "warn");
+    } else if (sample.running) {
+      setStatus(sample.settled ? "Live" : "Measuring…", "live");
+    }
+
+    if (warningEl && sawHidden) warningEl.hidden = false;
+
+    drawGraph(sample);
+    updateVerdict();
+  }
+
+  const meter = new RefreshRateMeter({ onSample: render });
+
+  let running = true;
+  startBtn?.addEventListener("click", () => {
+    running = !running;
+    if (running) {
+      meter.start();
+      startBtn.textContent = "Pause";
+      setStatus("Measuring…", "live");
+    } else {
+      meter.stop();
+      startBtn.textContent = "Resume";
+      setStatus("Paused", "paused");
+    }
+  });
+
+  resetBtn?.addEventListener("click", () => {
+    meter.reset();
+    sawHidden = false;
+    if (warningEl) warningEl.hidden = true;
+  });
+
+  fsBtn?.addEventListener("click", async () => {
+    if (!stage) return;
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await stage.requestFullscreen();
+    } catch {
+      /* ignored — fullscreen may be blocked */
+    }
+  });
+
+  advertisedSel?.addEventListener("change", updateVerdict);
+
+  window.addEventListener("resize", resizeCanvas);
+
+  // Kick off.
+  resizeCanvas();
+  setStatus("Measuring…", "live");
+  meter.start();
+</script>

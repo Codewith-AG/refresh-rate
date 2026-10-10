@@ -1,0 +1,90 @@
+---
+// Auto-collected display/device info — all read client-side, nothing uploaded.
+const rows = [
+  { id: "di-resolution", label: "Screen resolution" },
+  { id: "di-viewport", label: "Browser viewport" },
+  { id: "di-dpr", label: "Device pixel ratio" },
+  { id: "di-colordepth", label: "Color depth" },
+  { id: "di-gpu", label: "GPU / renderer" },
+  { id: "di-os", label: "Platform" },
+  { id: "di-browser", label: "Browser" },
+];
+---
+
+<section id="device-info" class="scroll-mt-20">
+  <div class="rounded-xl border border-hairline bg-surface-1 p-5 shadow-sm shadow-slate-900/5 sm:p-8">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink">
+      Your display &amp; device
+    </h2>
+    <p class="mt-2 text-sm text-ink-subtle">
+      Detected automatically in your browser. None of this leaves your device.
+    </p>
+
+    <dl class="mt-6 divide-y divide-hairline">
+      {
+        rows.map((row) => (
+          <div class="flex items-center justify-between gap-4 py-3">
+            <dt class="text-sm text-ink-subtle">{row.label}</dt>
+            <dd
+              id={row.id}
+              class="font-mono text-sm text-ink tabular-nums text-right"
+            >
+              —
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<script>
+  const set = (id: string, value: string) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value || "Unknown";
+  };
+
+  const getRenderer = (): string => {
+    try {
+      const canvas = document.createElement("canvas");
+      const gl = (canvas.getContext("webgl") ||
+        canvas.getContext("experimental-webgl")) as WebGLRenderingContext | null;
+      if (!gl) return "WebGL unavailable";
+      const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+      if (dbg) {
+        const r = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+        if (typeof r === "string" && r) return r;
+      }
+      return gl.getParameter(gl.RENDERER) as string;
+    } catch {
+      return "Unavailable";
+    }
+  };
+
+  const guessBrowser = (): string => {
+    const ua = navigator.userAgent;
+    if (/Edg\//.test(ua)) return "Edge";
+    if (/OPR\//.test(ua)) return "Opera";
+    if (/Chrome\//.test(ua) && !/Chromium/.test(ua)) return "Chrome";
+    if (/Firefox\//.test(ua)) return "Firefox";
+    if (/Safari\//.test(ua) && /Version\//.test(ua)) return "Safari";
+    return "Browser";
+  };
+
+  const platform =
+    (navigator as Navigator & { userAgentData?: { platform?: string } })
+      .userAgentData?.platform || navigator.platform || "Unknown";
+
+  set("di-resolution", `${screen.width} × ${screen.height}`);
+  set("di-viewport", `${window.innerWidth} × ${window.innerHeight}`);
+  set("di-dpr", String(window.devicePixelRatio || 1));
+  set("di-colordepth", `${screen.colorDepth}-bit`);
+  set("di-gpu", getRenderer());
+  set("di-os", platform);
+  set("di-browser", guessBrowser());
+
+  window.addEventListener("resize", () => {
+    set("di-viewport", `${window.innerWidth} × ${window.innerHeight}`);
+    set("di-dpr", String(window.devicePixelRatio || 1));
+  });
+</script>

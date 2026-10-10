@@ -1,0 +1,416 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TopNav from "../components/TopNav.astro";
+import Footer from "../components/Footer.astro";
+import RefreshRateTest from "../components/RefreshRateTest.astro";
+import MotionDemo from "../components/MotionDemo.astro";
+import DeviceInfoPanel from "../components/DeviceInfoPanel.astro";
+import Faq from "../components/Faq.astro";
+
+const SITE_URL = "https://freerefreshratetest.com";
+
+const pageTitle = "Refresh Rate Test — Free Monitor & Screen Hz Checker";
+const pageDescription =
+  "Free refresh rate test tool. Instantly check your monitor or screen's refresh rate in real time — works on PC, Mac, mobile & tablet. Find out if you're running 60Hz, 120Hz, 144Hz, 240Hz or higher.";
+const pageKeywords =
+  "refresh rate test, monitor refresh rate test, screen refresh rate test, 120hz refresh rate test, refresh rate test mobile, display refresh rate test, refresh rate test free, free mobile refresh rate test";
+
+const webAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Refresh Rate Test",
+  url: SITE_URL,
+  description: pageDescription,
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "All",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  featureList: [
+    "Real-time refresh rate detection",
+    "Works on PC, Mac, Android and iOS",
+    "Dropped-frame detection",
+    "Frame-time stability score",
+    "No sign-up required",
+    "100% free",
+  ],
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Refresh Rate Test",
+  url: SITE_URL,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${SITE_URL}/?q={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
+};
+
+const rates = ["60Hz", "90Hz", "120Hz", "144Hz", "165Hz", "240Hz", "360Hz+"];
+
+const trustPoints = [
+  {
+    title: "Honest, not just a number",
+    body: "We show current, average, max, min and a stability score — plus a live frame-time graph — so you can trust the reading.",
+  },
+  {
+    title: "Dropped-frame detection",
+    body: "A display can accept 144Hz but fail to draw every frame. We flag skipped frames caused by cheap cables or adapters.",
+  },
+  {
+    title: "Private by design",
+    body: "Everything is measured locally in your browser. No sign-up, no ads, nothing uploaded to a server — ever.",
+  },
+];
+
+const faqItems = [
+  {
+    q: "How does a browser measure refresh rate?",
+    a: "We time the browser's requestAnimationFrame callbacks with a high-precision clock. Because the browser repaints in sync with your display, the number of frames per second maps directly to your monitor's Hz.",
+  },
+  {
+    q: "Why is my reading slightly below my rated Hz (e.g. 143.9 instead of 144)?",
+    a: "Tiny decimal differences are normal — displays rarely run at an exact round number, and browser timing has small overhead. Anything within ~1% of your rated rate means your display is working correctly.",
+  },
+  {
+    q: "Why does it say 60Hz when I have a 144Hz monitor?",
+    a: "Usually the high refresh rate isn't enabled in your OS display settings, a slow cable/port is limiting bandwidth, or a laptop is in battery-saver mode. See our troubleshooting guide for step-by-step fixes.",
+  },
+  {
+    q: "Can the browser or OS cap the result?",
+    a: "Yes. The browser renders in sync with the display the window is on, and browser VSYNC or OS compositing can cap it. Keep the tab focused, use Fullscreen, and move the window onto the display you want to test.",
+  },
+  {
+    q: "Does this work on phones and tablets?",
+    a: "Yes. Modern phones with 90Hz/120Hz ProMotion or 'Smooth display' panels are supported — just make sure the high refresh rate mode is enabled in your device settings.",
+  },
+];
+
+const seoFaqItems = [
+  {
+    q: "How to test refresh rate",
+    a: "Scroll to the refresh rate test tool at the top of this page and press Start. Keep the browser tab focused for 3–5 seconds while it times your display's frames using the requestAnimationFrame API, then read your live Hz. It instantly tells you whether your screen is running at 60Hz, 120Hz, 144Hz, 240Hz or higher — with no download or sign-up required.",
+  },
+  {
+    q: "How to test monitor refresh rate",
+    a: "To test a specific monitor, drag your browser window onto that screen and run the test above. The browser repaints at the refresh rate of whichever display it sits on, so you can check each monitor in a multi-display setup one at a time, then compare the measured Hz to the monitor's rated specification.",
+  },
+  {
+    q: "How can I test refresh rate?",
+    a: "You can test your refresh rate right here in your browser — no app or plugin needed. Press Start on the tool above, wait a few seconds for the reading to stabilise, and read your real-time Hz. It works on PC, Mac, Android, iPhone and tablets.",
+  },
+  {
+    q: "How is refresh rate calculated?",
+    a: "Refresh rate is the number of times per second your display redraws the image, measured in Hertz (Hz). Our tool calculates it by counting how many frames the browser paints during a timed window with a high-precision clock: frames divided by seconds equals Hz. For example, 120 frames drawn in one second equals 120Hz.",
+  },
+  {
+    q: "How do I know if my monitor is 60Hz or 144Hz?",
+    a: "Run the test above — a 60Hz monitor reads around 59.9–60.1 Hz, while a 144Hz monitor reads around 143.9–144.1 Hz. If a 144Hz display only shows 60Hz, the high rate is usually not enabled in your OS display settings, or a slow HDMI cable or port is limiting the bandwidth.",
+  },
+  {
+    q: "What is a normal refresh rate?",
+    a: "60Hz is the standard, normal refresh rate for most everyday monitors, laptops and phones. Gaming and premium displays commonly run at 120Hz, 144Hz, 165Hz, 240Hz or more. Anything at or above 60Hz is normal for general use, while 120Hz and higher is the norm for smooth gaming.",
+  },
+  {
+    q: "Why is refresh rate important?",
+    a: "A higher refresh rate makes everything on screen smoother — scrolling, cursor movement, animations and especially fast-paced games. It reduces motion blur and perceived input lag and keeps moving objects clearer, which gives competitive gamers a real advantage and can ease eye strain during long sessions.",
+  },
+  {
+    q: "What is the difference between refresh rates?",
+    a: "The difference is how many frames per second a screen can show: 60Hz displays 60, 120Hz displays 120, 144Hz displays 144, and so on. Higher rates look noticeably smoother and feel more responsive. The jump from 60Hz to 120Hz or 144Hz is the most dramatic, while gains above 240Hz are subtler and mainly benefit competitive gamers.",
+  },
+  {
+    q: "Can the human eye see above 60Hz?",
+    a: "Yes. The eye does not count frames, but most people clearly notice the extra smoothness moving from 60Hz to 120Hz or 144Hz, and many can perceive differences up to 240Hz and beyond — especially in motion, fast scrolling and gaming. 60Hz is not the limit of human perception.",
+  },
+  {
+    q: "What is the difference between FPS and Hertz?",
+    a: "FPS (frames per second) is how many frames your GPU or software produces, while Hertz (Hz) is how many frames your display can actually show each second. They work together: a 144Hz monitor can display at most 144 FPS even if the game renders more, and a 144Hz screen fed only 60 FPS will still look like 60.",
+  },
+  {
+    q: "How many hertz can a human see?",
+    a: "There is no exact cut-off, but research and real-world testing suggest most people perceive clear improvements up to roughly 120–240Hz, with smaller but still noticeable benefits beyond that. Sensitivity varies from person to person and is strongest with motion, which is why 120Hz and 144Hz feel so much smoother than 60Hz.",
+  },
+  {
+    q: "What is the perfect refresh rate?",
+    a: "There is no single perfect rate — it depends on how you use your screen. 60Hz is fine for basic browsing and office work, 120Hz is a great all-round sweet spot, and 144Hz to 240Hz is ideal for gaming. The best refresh rate is simply the highest your display and GPU can reliably sustain for your tasks.",
+  },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [...faqItems, ...seoFaqItems].map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.a,
+    },
+  })),
+};
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  keywords={pageKeywords}
+  jsonLd={[webAppSchema, websiteSchema, faqSchema]}
+>
+  <TopNav />
+
+  <main class="mx-auto max-w-site px-4 pb-24 sm:px-6">
+    <!-- Hero -->
+    <section class="pt-14 pb-10 sm:pt-20">
+      <p class="text-[13px] font-medium tracking-[0.4px] text-ink-subtle uppercase">
+        Free · Real-time · 100% in your browser
+      </p>
+      <h1
+        class="mt-4 max-w-3xl font-display text-4xl font-semibold tracking-[-0.03em] text-ink sm:text-6xl"
+      >
+        What refresh rate is your screen <span class="text-primary">really</span> running?
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        Measure your monitor or screen's refresh rate in real time and find out
+        instantly whether you're getting 60Hz, 90Hz, 120Hz, 144Hz, 165Hz, 240Hz
+        — or higher.
+      </p>
+
+      <ul class="mt-6 flex flex-wrap gap-2">
+        {
+          rates.map((r) => (
+            <li class="rounded-full border border-hairline bg-surface-1 px-3 py-1 font-mono text-xs text-ink-muted">
+              {r}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <!-- The tool -->
+    <RefreshRateTest />
+
+    <!-- Trust / why we're better -->
+    <section class="mt-24">
+      <h2 class="max-w-2xl font-display text-3xl font-semibold tracking-tight text-ink">
+        Accurate like the pros, simple enough for anyone
+      </h2>
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        {
+          trustPoints.map((point) => (
+            <div class="rounded-xl border border-hairline bg-surface-1 p-6 shadow-sm shadow-slate-900/5">
+              <h3 class="font-display text-lg font-medium tracking-tight text-ink">
+                {point.title}
+              </h3>
+              <p class="mt-2 text-sm leading-relaxed text-ink-muted">
+                {point.body}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Motion demo -->
+    <div class="mt-24">
+      <MotionDemo />
+    </div>
+
+    <!-- Device info -->
+    <div class="mt-24">
+      <DeviceInfoPanel />
+    </div>
+
+    <!-- FAQ -->
+    <div class="mt-24">
+      <Faq items={faqItems} jsonLd={false} />
+    </div>
+
+    <!-- Refresh rate FAQ (SEO) -->
+    <div class="mt-24">
+      <Faq
+        items={seoFaqItems}
+        heading="Refresh rate FAQ"
+        jsonLd={false}
+      />
+    </div>
+
+    <!-- ============================================================
+         SEO CONTENT SECTION  (800–1200 words, keyword-rich)
+         ============================================================ -->
+    <section class="mt-24 prose prose-slate dark:prose-invert max-w-none" aria-label="About the Refresh Rate Test tool">
+
+      <h2 class="font-display text-3xl font-semibold tracking-tight text-ink">
+        The Complete Guide to Refresh Rate Testing
+      </h2>
+
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        Whether you've just bought a new gaming monitor, upgraded to a high-refresh-rate phone, or
+        simply want to verify your setup is performing as advertised, our <strong>refresh rate test</strong> gives
+        you an instant, accurate answer — completely free, with no downloads and no sign-ups required.
+        This page explains exactly what refresh rate is, why it matters, how our tool works across
+        every device, and how to make sure you're getting every Hertz you paid for.
+      </p>
+
+      <h3 class="mt-10 font-display text-2xl font-semibold tracking-tight text-ink">
+        What Is Refresh Rate and Why Does It Matter?
+      </h3>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        Refresh rate measures how many times per second your display draws a new image, expressed in
+        Hertz (Hz). A standard display refreshes at <strong>60Hz</strong> — sixty frames per second.
+        High-refresh-rate panels run at <strong>90Hz, 120Hz, 144Hz, 165Hz, 240Hz, or even 360Hz</strong>.
+        The difference is immediately visible: scrolling feels smoother, cursor movements look more
+        precise, and fast-paced games become significantly easier to track.
+      </p>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        For competitive gamers, a higher refresh rate can mean the difference between winning and losing
+        a gunfight. For everyday users, a smooth 120Hz screen reduces eye strain during long reading
+        or browsing sessions. Running a quick <strong>screen refresh rate test</strong> is the fastest
+        way to confirm that your hardware is actually delivering what it promises.
+      </p>
+
+      <h3 class="mt-10 font-display text-2xl font-semibold tracking-tight text-ink">
+        How to Use This Free Refresh Rate Test
+      </h3>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        Using our <strong>display refresh rate test</strong> is effortless:
+      </p>
+      <ol class="mt-4 list-decimal list-inside space-y-2 text-ink-muted leading-relaxed">
+        <li>Scroll up to the test widget above and press <strong>Start</strong>.</li>
+        <li>Keep the browser tab focused and visible — don't minimise it.</li>
+        <li>
+          Wait 3–5 seconds for the reading to stabilise. You'll see live current Hz, an average,
+          a max, a min, a stability score, and a frame-time graph.
+        </li>
+        <li>Compare the result to your display's rated Hz specification.</li>
+        <li>
+          If the numbers don't match, visit our{" "}
+          <a href="/troubleshooting" class="text-primary underline underline-offset-2">Troubleshooting guide</a>{" "}
+          for step-by-step fixes.
+        </li>
+      </ol>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        Our <strong>refresh rate test free</strong> tool never asks for personal information, never
+        shows advertisements, and never sends data to a server. Every measurement happens inside
+        your own browser using the <code>requestAnimationFrame</code> API and a high-precision
+        performance clock.
+      </p>
+
+      <h3 class="mt-10 font-display text-2xl font-semibold tracking-tight text-ink">
+        Monitor Refresh Rate Test — PC and Mac
+      </h3>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        A <strong>monitor refresh rate test</strong> on a desktop or laptop is the most common use
+        case. Windows and macOS both let you set your display rate in system settings, but the setting
+        doesn't always stick after a driver update, a new cable, or a change in resolution. Our tool
+        gives you real-time confirmation that the OS setting is actually being applied all the way to
+        the pixels on screen.
+      </p>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        On <strong>Windows 10 / 11</strong>, navigate to Settings → System → Display → Advanced
+        display to choose your refresh rate. After changing it, return here and run the test again to
+        confirm. On <strong>macOS</strong>, open System Settings → Displays, hold Option, and click
+        the Refresh Rate dropdown to reveal the full list of supported rates.
+      </p>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        Multi-monitor setups deserve special attention: the browser renders at the rate of the
+        display the window is currently sitting on. Drag the browser window onto the monitor you
+        want to measure, then run the test.
+      </p>
+
+      <h3 class="mt-10 font-display text-2xl font-semibold tracking-tight text-ink">
+        120Hz Refresh Rate Test — Is Your Display Really Running at 120Hz?
+      </h3>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        The jump from 60Hz to 120Hz is one of the most impactful display upgrades available today.
+        Our <strong>120Hz refresh rate test</strong> will show a steady reading of approximately
+        <strong>119.9–120.1 Hz</strong> when everything is set up correctly. If you're seeing 60Hz
+        on a 120Hz-capable display, the most common culprits are:
+      </p>
+      <ul class="mt-4 list-disc list-inside space-y-2 text-ink-muted leading-relaxed">
+        <li>An HDMI 1.4 cable, which cannot carry 1080p at 120Hz — upgrade to HDMI 2.0/2.1 or DisplayPort.</li>
+        <li>A laptop running on battery in power-saving mode, which forces 60Hz to extend battery life.</li>
+        <li>The OS refresh rate setting still set to 60Hz after enabling a high-refresh panel.</li>
+        <li>An outdated GPU or display driver that doesn't expose the higher rate.</li>
+      </ul>
+
+      <h3 class="mt-10 font-display text-2xl font-semibold tracking-tight text-ink">
+        Refresh Rate Test on Mobile — Android and iPhone
+      </h3>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        Our <strong>refresh rate test mobile</strong> experience works just as well on smartphones
+        and tablets as it does on a desktop. Modern flagship phones ship with 90Hz, 120Hz, or even
+        144Hz panels, but many default to 60Hz to conserve battery.
+      </p>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        To run a <strong>free mobile refresh rate test</strong>, simply open this page in your
+        phone's browser and tap Start. No app download is needed. For accurate results:
+      </p>
+      <ul class="mt-4 list-disc list-inside space-y-2 text-ink-muted leading-relaxed">
+        <li>
+          <strong>Android:</strong> Go to Settings → Display → Motion Smoothness (or "Smooth display")
+          and select High or Adaptive. Disable Battery Saver mode, which often forces 60Hz.
+        </li>
+        <li>
+          <strong>iPhone (ProMotion):</strong> ProMotion on iPhone 13 Pro and later adjusts
+          dynamically up to 120Hz. To prevent iOS from capping it, go to Settings → Accessibility →
+          Motion and ensure "Limit Frame Rate" is turned off.
+        </li>
+        <li>
+          <strong>iPad / tablets:</strong> The same browser-based method applies. Newer iPads with
+          ProMotion display up to 120Hz natively in Safari.
+        </li>
+      </ul>
+
+      <h3 class="mt-10 font-display text-2xl font-semibold tracking-tight text-ink">
+        Understanding Your Test Results
+      </h3>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        Our <strong>display refresh rate test</strong> shows more than just a single number. Here's
+        what each metric means:
+      </p>
+      <ul class="mt-4 list-disc list-inside space-y-2 text-ink-muted leading-relaxed">
+        <li><strong>Current Hz</strong> — the instantaneous frame rate at this exact moment.</li>
+        <li><strong>Average Hz</strong> — a rolling average over the last second; the most reliable figure.</li>
+        <li><strong>Max / Min Hz</strong> — the highest and lowest spikes recorded during the test run.</li>
+        <li><strong>Stability score</strong> — how consistent the frame timing is. 95%+ is excellent.</li>
+        <li><strong>Dropped frames</strong> — frames that took roughly twice as long as expected, indicating a cable, adapter, or GPU issue.</li>
+      </ul>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        A reading within 1% of your panel's rated Hz is normal and healthy. Small decimal differences
+        (e.g. 143.9 instead of 144) simply reflect how displays and browser timers work in the real
+        world — they are not a defect.
+      </p>
+
+      <h3 class="mt-10 font-display text-2xl font-semibold tracking-tight text-ink">
+        Why Choose This Free Refresh Rate Test?
+      </h3>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        There are many tools online that claim to check your Hz, but most show only a single rounded
+        number with no context. Our tool was built from the ground up to be <em>honest and transparent</em>:
+      </p>
+      <ul class="mt-4 list-disc list-inside space-y-2 text-ink-muted leading-relaxed">
+        <li>Works on every device — desktop, laptop, phone, tablet — without a plugin or app.</li>
+        <li>Provides live frame-time graphs so you can spot instability at a glance.</li>
+        <li>Detects dropped frames that other tools ignore entirely.</li>
+        <li>Completely private — no data leaves your device, ever.</li>
+        <li>Genuinely free with no account required and no ads obscuring the results.</li>
+      </ul>
+      <p class="mt-4 text-ink-muted leading-relaxed">
+        Run the <strong>refresh rate test</strong> now, bookmark this page, and come back any time
+        you change your display setup, update your drivers, or buy a new monitor. A five-second check
+        can save hours of troubleshooting and confirm you're getting the smooth, high-Hz experience
+        your display was designed to deliver.
+      </p>
+
+    </section>
+    <!-- end SEO content -->
+
+  </main>
+
+  <Footer />
+</Layout>

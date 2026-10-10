@@ -1,0 +1,49 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TopNav from "../components/TopNav.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Privacy Policy — Refresh Rate Test";
+const description = "Privacy Policy for Refresh Rate Test. We believe in privacy by design. No data is sent to our servers.";
+---
+
+<Layout title={title} description={description}>
+  <TopNav />
+  <main class="mx-auto max-w-site px-4 pb-24 sm:px-6">
+    <section class="pt-14 pb-10 sm:pt-20">
+      <h1 class="font-display text-4xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl">
+        Privacy Policy
+      </h1>
+      <p class="mt-5 text-lg leading-relaxed text-ink-muted">
+        Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+      </p>
+    </section>
+
+    <div class="prose prose-slate dark:prose-invert max-w-none">
+      <p>
+        At Refresh Rate Test, privacy is a core principle. Our tool is designed to function entirely locally within your browser. 
+      </p>
+      <h2>Data Collection</h2>
+      <p>
+        We do <strong>not</strong> collect, store, or transmit any personal data, hardware specifications, or refresh rate test results to our servers. The refresh rate measurement is performed completely client-side using standard web APIs (such as <code>requestAnimationFrame</code>).
+      </p>
+      <h2>Cookies and Tracking</h2>
+      <p>
+        We do not use tracking cookies or intrusive third-party analytics that profile you across the web. Any local storage used by the site is strictly for saving your preferences (such as your chosen theme or target refresh rate) directly on your device.
+      </p>
+      <h2>Third-Party Services</h2>
+      <p>
+        Our website may be hosted on third-party infrastructure (such as Cloudflare or Vercel) which may temporarily log standard web request information (like IP addresses and user agents) for security and operational purposes, as is standard practice across the internet.
+      </p>
+      <h2>Changes to This Policy</h2>
+      <p>
+        We may update this Privacy Policy from time to time. Any changes will be reflected on this page with an updated revision date.
+      </p>
+      <h2>Contact Us</h2>
+      <p>
+        If you have any questions about this Privacy Policy, please <a href="/contact">contact us</a>.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Layout>

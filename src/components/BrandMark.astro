@@ -1,0 +1,27 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+---
+
+<span class={`inline-flex items-center gap-2.5 ${className}`}>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="lucide lucide-activity text-primary"
+    aria-hidden="true"
+  >
+    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+  </svg>
+  <span class="font-display font-semibold tracking-tight text-ink"
+    >Refresh Rate Test</span
+  >
+</span>

@@ -1,0 +1,43 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TopNav from "../components/TopNav.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "About Us — Refresh Rate Test";
+const description = "Learn more about Refresh Rate Test, a free and private tool to measure your display's refresh rate.";
+---
+
+<Layout title={title} description={description}>
+  <TopNav />
+  <main class="mx-auto max-w-site px-4 pb-24 sm:px-6">
+    <section class="pt-14 pb-10 sm:pt-20">
+      <h1 class="font-display text-4xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl">
+        About Us
+      </h1>
+    </section>
+
+    <div class="prose prose-slate dark:prose-invert max-w-none">
+      <p>
+        Welcome to <strong>Refresh Rate Test</strong>. We built this tool with a simple mission: to provide an accurate, easy-to-use, and entirely private way to measure your monitor or screen's refresh rate.
+      </p>
+      <h2>Why We Built This</h2>
+      <p>
+        With the rise of high refresh rate displays in everything from gaming monitors to smartphones, it's increasingly important to verify that you're actually getting the performance you paid for. Operating system settings, faulty cables, or driver bugs can often cause a 144Hz or 240Hz screen to run at only 60Hz. 
+      </p>
+      <p>
+        We noticed that many existing tools were cluttered with ads, required downloads, or were confusing to use. We wanted to create a clean, ad-free, and trustworthy alternative.
+      </p>
+      <h2>Our Philosophy</h2>
+      <ul>
+        <li><strong>Accuracy:</strong> We use precise browser APIs to give you an honest reading of your screen's current refresh rate.</li>
+        <li><strong>Privacy First:</strong> Your test results and device data never leave your browser. We don't upload anything to our servers.</li>
+        <li><strong>Accessibility:</strong> Our tool works seamlessly across PCs, Macs, and mobile devices, without requiring any app installations.</li>
+      </ul>
+      <h2>Get in Touch</h2>
+      <p>
+        We're always looking to improve. If you have feedback or suggestions, feel free to <a href="/contact">contact us</a>.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Layout>

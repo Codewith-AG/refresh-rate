@@ -1,0 +1,133 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TopNav from "../components/TopNav.astro";
+import Footer from "../components/Footer.astro";
+
+const steps = [
+  {
+    n: "01",
+    title: "Time every animation frame",
+    body: "The engine registers a requestAnimationFrame loop. The browser calls it right before each repaint and hands us a high-precision timestamp from performance.now().",
+  },
+  {
+    n: "02",
+    title: "Measure the gaps between frames",
+    body: "We track the milliseconds between consecutive frames. The refresh rate is simply 1000 divided by the typical gap — a 6.94ms gap means ~144Hz.",
+  },
+  {
+    n: "03",
+    title: "Make it robust",
+    body: "We use a rolling median over a one-second window to ignore noise, flag intervals roughly double the median as dropped frames, and compute a stability score from the frame-time variance.",
+  },
+  {
+    n: "04",
+    title: "Snap to a verdict",
+    body: "A stable average is matched to the nearest common panel rate (60/120/144/165/240…) while the exact decimal stays visible, and we compare it against the rate you say you paid for.",
+  },
+];
+
+const caveats = [
+  {
+    title: "The browser follows the display the window is on",
+    body: "On a multi-monitor setup, drag this window onto the screen you want to test. The measurement reflects whichever display is rendering the window.",
+  },
+  {
+    title: "VSYNC & OS compositing can cap it",
+    body: "Browsers render in sync with the display and the OS compositor. In rare cases this limits the reported rate below the panel's true capability.",
+  },
+  {
+    title: "Background tabs are throttled",
+    body: "Browsers throttle requestAnimationFrame to ~1Hz (or pause it) in hidden tabs. We detect this, pause measuring, and warn you — keep the tab focused.",
+  },
+  {
+    title: "Variable refresh rate (VRR) moves around",
+    body: "With G-Sync / FreeSync active, the rate can fluctuate with on-screen activity. A moving number can be expected rather than a fault.",
+  },
+];
+---
+
+<Layout
+  title="How the Refresh Rate Test Works — Accurate Monitor Hz Measurement"
+  description="Learn how our free monitor refresh rate test measures your display Hz in the browser using requestAnimationFrame. Understand accuracy, caveats, and what affects your screen refresh rate test result."
+  keywords="how refresh rate test works, monitor refresh rate test accuracy, screen refresh rate test method, display refresh rate measurement, requestAnimationFrame Hz test"
+>
+  <TopNav />
+
+  <main class="mx-auto max-w-site px-4 pb-24 sm:px-6">
+    <section class="pt-14 pb-10 sm:pt-20">
+      <p class="text-[13px] font-medium tracking-[0.4px] text-ink-subtle uppercase">
+        How it works
+      </p>
+      <h1
+        class="mt-4 max-w-3xl font-display text-4xl font-semibold tracking-[-0.03em] text-ink sm:text-5xl"
+      >
+        Measuring refresh rate, honestly
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+        No plugins, no uploads, no guesswork. Here's exactly how the test
+        arrives at your number — and the limits worth knowing.
+      </p>
+    </section>
+
+    <section class="grid gap-4 md:grid-cols-2">
+      {
+        steps.map((step) => (
+          <div class="rounded-xl border border-hairline bg-surface-1 p-6 shadow-sm shadow-slate-900/5">
+            <span class="font-mono text-sm text-primary">{step.n}</span>
+            <h2 class="mt-2 font-display text-xl font-medium tracking-tight text-ink">
+              {step.title}
+            </h2>
+            <p class="mt-2 text-sm leading-relaxed text-ink-muted">
+              {step.body}
+            </p>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="mt-24">
+      <h2 class="font-display text-3xl font-semibold tracking-tight text-ink">
+        Accuracy caveats
+      </h2>
+      <p class="mt-3 max-w-2xl text-ink-muted">
+        Browser-based measurement is accurate when conditions are right. Keep
+        these in mind for a trustworthy reading.
+      </p>
+      <div class="mt-8 divide-y divide-hairline rounded-xl border border-hairline bg-surface-1">
+        {
+          caveats.map((c) => (
+            <div class="px-6 py-5">
+              <h3 class="font-display text-lg font-medium tracking-tight text-ink">
+                {c.title}
+              </h3>
+              <p class="mt-1.5 text-sm leading-relaxed text-ink-muted">
+                {c.body}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="mt-24">
+      <div
+        class="rounded-xl border border-hairline bg-surface-1 p-8 sm:p-12"
+      >
+        <h2 class="max-w-xl font-display text-2xl font-semibold tracking-tight text-ink">
+          Ready to check your display?
+        </h2>
+        <p class="mt-2 max-w-xl text-ink-muted">
+          Run the live test and see your real refresh rate in seconds.
+        </p>
+        <a
+          href="/#test"
+          class="mt-6 inline-flex rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-on-primary transition-colors hover:bg-primary-hover"
+        >
+          Run the refresh rate test
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

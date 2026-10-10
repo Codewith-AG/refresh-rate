@@ -1,0 +1,110 @@
+---
+// "Feel the difference" — a smooth moving object users can watch to sense
+// frame pacing. Original visual (not a UFO clone). Honors reduced-motion.
+---
+
+<section id="motion" class="scroll-mt-20">
+  <div class="rounded-2xl border border-stage-border bg-stage p-5 text-stage-ink shadow-xl shadow-slate-900/15 sm:p-8">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 class="font-display text-2xl font-semibold tracking-tight text-stage-ink">
+          Feel the smoothness
+        </h2>
+        <p class="mt-2 max-w-prose text-sm text-stage-muted">
+          Watch the marker sweep across. On a higher-Hz display it looks
+          noticeably smoother and leaves less motion blur.
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <label for="motion-speed" class="text-xs text-stage-muted">Speed</label>
+        <input
+          id="motion-speed"
+          type="range"
+          min="240"
+          max="1920"
+          step="120"
+          value="960"
+          class="accent-primary"
+        />
+        <span id="motion-speed-val" class="font-mono text-xs text-stage-muted tabular-nums"
+          >960 px/s</span
+        >
+      </div>
+    </div>
+
+    <div
+      id="motion-track"
+      class="relative mt-6 h-24 overflow-hidden rounded-xl border border-stage-border bg-stage-2"
+    >
+      <div
+        id="motion-marker"
+        class="absolute top-1/2 left-0 h-10 w-10 -translate-y-1/2 rounded-full bg-primary shadow-[0_0_28px_rgba(129,140,248,0.7)] will-change-transform"
+      >
+      </div>
+    </div>
+
+    <p
+      id="motion-reduced"
+      hidden
+      class="mt-3 text-xs text-stage-muted"
+    >
+      Motion is paused because your system requests reduced motion.
+    </p>
+  </div>
+</section>
+
+<script>
+  const track = document.getElementById("motion-track");
+  const marker = document.getElementById("motion-marker");
+  const speedInput = document.getElementById("motion-speed") as HTMLInputElement | null;
+  const speedVal = document.getElementById("motion-speed-val");
+  const reducedNote = document.getElementById("motion-reduced");
+
+  const prefersReduced = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  let pxPerSec = speedInput ? Number(speedInput.value) : 960;
+  let x = 0;
+  let dir = 1;
+  let last = performance.now();
+  let rafId = 0;
+
+  speedInput?.addEventListener("input", () => {
+    pxPerSec = Number(speedInput.value);
+    if (speedVal) speedVal.textContent = `${pxPerSec} px/s`;
+  });
+
+  function frame(now: number) {
+    const dt = (now - last) / 1000;
+    last = now;
+    if (track && marker) {
+      const span = track.clientWidth - marker.clientWidth;
+      x += dir * pxPerSec * dt;
+      if (x >= span) {
+        x = span;
+        dir = -1;
+      } else if (x <= 0) {
+        x = 0;
+        dir = 1;
+      }
+      marker.style.transform = `translate(${x}px, -50%)`;
+    }
+    rafId = requestAnimationFrame(frame);
+  }
+
+  if (prefersReduced) {
+    if (reducedNote) reducedNote.hidden = false;
+  } else {
+    last = performance.now();
+    rafId = requestAnimationFrame(frame);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        cancelAnimationFrame(rafId);
+      } else {
+        last = performance.now();
+        rafId = requestAnimationFrame(frame);
+      }
+    });
+  }
+</script>

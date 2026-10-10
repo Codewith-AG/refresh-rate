@@ -1,0 +1,106 @@
+---
+import "../styles/global.css";
+import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  keywords?: string;
+  ogType?: string;
+  jsonLd?: object | object[];
+}
+
+const SITE_NAME = "Refresh Rate Test";
+const SITE_URL = "https://freerefreshratetest.com";
+
+const {
+  title = "Refresh Rate Test — Free Monitor & Screen Hz Checker",
+  description = "Free refresh rate test tool. Instantly check your monitor or screen's refresh rate in real time — works on PC, Mac, mobile & tablet. Find out if you're running 60Hz, 120Hz, 144Hz, 240Hz or higher.",
+  canonical,
+  keywords = "refresh rate test, monitor refresh rate test, screen refresh rate test, 120hz refresh rate test, refresh rate test mobile, display refresh rate test, refresh rate test free, free mobile refresh rate test",
+  ogType = "website",
+  jsonLd,
+} = Astro.props;
+
+const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL("/og.svg", Astro.site).href;
+const ogImageAlt = "Refresh Rate Test — Free online monitor Hz checker";
+
+const jsonLdScripts = jsonLd
+  ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd])
+  : [];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png?v=2" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+    <link rel="shortcut icon" href="/favicon.ico?v=2" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2" />
+    <meta name="apple-mobile-web-app-title" content="Refresh Rate Test" />
+    <link rel="manifest" href="/site.webmanifest?v=2" />
+
+    <!-- Canonical & crawl -->
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Primary meta -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="FreeRefreshRateTest.com" />
+
+    <!-- Theme colours -->
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+
+    <!-- Apply dark class before first paint to avoid flash -->
+    <script is:inline>
+      (function () {
+        var stored = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored === 'dark' || (!stored && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@refreshratetest" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+
+    <!-- JSON-LD structured data -->
+    {jsonLdScripts.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
+  </head>
+  <body class="min-h-screen bg-canvas text-ink font-sans antialiased">
+    <slot />
+  </body>
+</html>
