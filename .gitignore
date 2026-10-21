@@ -24,3 +24,6 @@ pnpm-debug.log*
 .idea/
 # postman
 postman/
+
+# cloudflare wrangler
+.wrangler/
